@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import expoPushTokenApi from "../api/expoPushTokens";
+import { useNavigation } from '@react-navigation/native';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -12,13 +13,22 @@ Notifications.setNotificationHandler({
     }),
 });
 
-export default useNotifications = (notificationListener) => {
+export default useNotifications = () => {
+  const navigation = useNavigation();
     useEffect(() => {
         registerForPushNotification();
-        // Notifications.addNotificationReceivedListener((notification) => {
-        //   console.log('new notification');
-        // });
-        if(notificationListener) Notifications.addNotificationResponseReceivedListener(notificationListener);
+        // (notification) => {
+//   navigation.navigate('Settings', { screen: 'Messages' });
+// }
+
+        Notifications.addNotificationReceivedListener((notification) => {
+          console.log('new notification');
+        });
+        Notifications.addNotificationResponseReceivedListener(response => {
+          console.log(response);
+          navigation.navigate('Settings', { screen: 'Messages' });
+          // navigation.navigate('Settings', { screen: 'Chat' });
+        });
        }, []);
      
        const registerForPushNotification = async () => {
@@ -36,6 +46,7 @@ export default useNotifications = (notificationListener) => {
                return;
              }
              const token = (await Notifications.getExpoPushTokenAsync()).data;
+             console.log(token)
              expoPushTokenApi.register(token);
            } catch (error) {
              console.log('Error getting a push token', error);

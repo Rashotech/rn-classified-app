@@ -3,11 +3,11 @@ import { View, StyleSheet } from "react-native";
 import Checkbox from "expo-checkbox";
 import AppText from "./AppText";
 
-export default function AppTextInput({ name, width = "100%", ...otherProps }) {
+export default function AppTextInput({ title, width = "100%", ...otherProps }) {
   return (
     <View style={[styles.container, { width }]}>
       <Checkbox style={styles.checkbox} {...otherProps} />
-      <AppText>{name}</AppText>
+      <AppText>{title}</AppText>
     </View>
   );
 }

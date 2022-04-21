@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  Text,
   View,
   StyleSheet,
   KeyboardAvoidingView,
@@ -23,12 +22,14 @@ import ListItem from "../components/ListItem";
 import { Image as CacheImage } from "react-native-expo-image-cache";
 import ContactSellerForm from "../components/ContactSellerForm";
 import listingsApi from "../api/listings";
+import useAuth from '../auth/useAuth';
 
 export default function ListingDetailsScreen({ route }) {
   const listingId = route.params;
   const [listing, setListing] = useState();
   const [phone, setPhone] = useState(false);
   const listingApi = useApi(listingsApi.getListingById);
+  const { user } = useAuth();
 
   useEffect(() => {
     getListing();
@@ -42,6 +43,7 @@ export default function ListingDetailsScreen({ route }) {
   const types = {
     used: "Used",
     brand_new: "Brand New",
+    refurbished: "Refurbished"
   };
 
   const [indexSelected, setIndexSelected] = useState(0);
@@ -58,7 +60,7 @@ export default function ListingDetailsScreen({ route }) {
           <AppText>Couldn't retrieve the listings.</AppText>
           <AppButton
             title="Retry"
-            onPress={listingApi.request(listingId._id)}
+            onPress={getListing}
           />
         </Screen>
       )}
@@ -97,7 +99,7 @@ export default function ListingDetailsScreen({ route }) {
                   />
                 </View>
               </View>
-              <View style={styles.detailsContainer}>
+              <View style={listing.images.length > 1 ? styles.detailsContainer : styles.detailsSingleContainer}>
                 <View style={styles.info}>
                   <AppText style={styles.title}>{listing.title}</AppText>
                   <AppText style={styles.price}> ₦{listing.price}</AppText>
@@ -107,7 +109,6 @@ export default function ListingDetailsScreen({ route }) {
                     <Ionicons name="location-outline" size={16} color="black" />
                     {listing.lga}, {listing.region} State
                   </AppText>
-
                   <View style={styles.phoneContainer}>
                     {phone ? (
                       <View style={styles.phone}>
@@ -157,14 +158,14 @@ export default function ListingDetailsScreen({ route }) {
                     </AppText>
                   </View>
                 </View>
-                <View style={styles.userContainer}>
+                {(user._id !== listing.postedBy._id) && <View style={styles.userContainer}>
                   <ListItem
-                    image={require("../assets/mosh.jpg")}
+                    image={listing.postedBy.profilePic}
                     title={`${listing.postedBy.firstName} ${listing.postedBy.lastName}`}
                     subTitle="Poster"
                   />
-                </View>
-                <ContactSellerForm listing={listing} />
+                  <ContactSellerForm style={styles.contact} listing={listing} />
+                </View>}
               </View>
             </KeyboardAvoidingView>
           </ScrollView>
@@ -180,11 +181,16 @@ const styles = StyleSheet.create({
     position: "relative",
     bottom: 50,
   },
+  contact: {
+    margin: 200
+  },
   phone: {
     paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
+    marginLeft: 5,
     color: "white",
     fontWeight: "bold",
+    fontSize: 15,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
@@ -206,12 +212,16 @@ const styles = StyleSheet.create({
   detailsContainer: {
     marginTop: -50,
   },
+  detailsSingleContainer: {
+    marginVertical: 20
+  },
   image: {
     width: "100%",
     height: 300,
   },
   info: {
     justifyContent: "space-between",
+    flex: 1,
     alignItems: "center",
     flexDirection: "row",
     paddingHorizontal: 20,
@@ -227,5 +237,6 @@ const styles = StyleSheet.create({
   },
   userContainer: {
     marginVertical: 10,
+    marginHorizontal: 20
   },
 });

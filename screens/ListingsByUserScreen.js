@@ -12,9 +12,8 @@ import routes from "../navigation/routes";
 import listingsApi from "../api/listings";
 import useApi from "../hooks/useApi";
 
-function LIstingCategoryScreen({ navigation , route}) {
-  const categoryId = route.params._id;
-  const getListingsApi = useApi(listingsApi.getListingByCategory);
+function ListingsByUserScreen({ navigation }) {
+  const getlistingsByUserApi = useApi(listingsApi.getlistingsByUser);
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
@@ -22,14 +21,14 @@ function LIstingCategoryScreen({ navigation , route}) {
   }, []);
 
   const getListings = async () => {
-    const result = await getListingsApi.request(categoryId);
+    const result = await getlistingsByUserApi.request();
     setListings(result.data);
   };
 
   return (
     <>
       <ActivityIndicator
-        visible={getListingsApi.loading}
+        visible={getlistingsByUserApi.loading}
       />
       <Screen style={styles.screen}>
         <FlatList
@@ -49,15 +48,15 @@ function LIstingCategoryScreen({ navigation , route}) {
           )}
           ListHeaderComponent={
             <>
-              {(listings.length === 0 && !getListingsApi.loading && !getListingsApi.error) && (
+              {(listings.length === 0 && !getlistingsByUserApi.loading && !getlistingsByUserApi.error) && (
                 <View style={styles.empty}>
-                  <AppText>No listing in this category yet</AppText>
+                  <AppText>You don't have any listing yet</AppText>
                 </View>
               )}
-              {getListingsApi.error && (
+              {getlistingsByUserApi.error && (
                 <>
                   <AppText>Couldn't retrieve the listings.</AppText>
-                  <AppButton title="Retry" onPress={getListingsApi.request} />
+                  <AppButton title="Retry" onPress={getlistingsByUserApi.request} />
                 </>
               )}
             </>
@@ -94,4 +93,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LIstingCategoryScreen;
+export default ListingsByUserScreen;

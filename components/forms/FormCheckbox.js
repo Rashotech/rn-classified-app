@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import { useFormikContext } from "formik";
 
 import ErrorMessage from "./ErrorMessage";
 import CheckBox from "../AppCheckBox";
+import colors from "../../config/colors";
 
-function AppCheckbox({ name, width, ...otherProps }) {
-  const [isChecked, setChecked] = useState(false);
+function AppCheckbox({ name, title, width, ...otherProps }) {
   const { setFieldTouched, setFieldValue, errors, touched, values } =
     useFormikContext();
 
@@ -14,10 +14,10 @@ function AppCheckbox({ name, width, ...otherProps }) {
       <CheckBox
         onBlur={() => setFieldTouched(name)}
         value={values[name]}
-        onValueChange={() => setFieldValue(name, setChecked)}
-        color={isChecked ? "#4630EB" : undefined}
+        onValueChange={() => setFieldValue(name, !values[name])}
+        color={values[name] ? colors.primary : undefined}
         width={width}
-        name={name}
+        title={title}
         {...otherProps}
       />
       <ErrorMessage error={errors[name]} visible={touched[name]} />

@@ -18,6 +18,7 @@ export default function Card({
   const types = {
     "used": "Used",
     "brand_new": "Brand New",
+    "refurbished": "Refurbished"
   };
 
   return (

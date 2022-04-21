@@ -13,17 +13,17 @@ import listingsApi from "../api/listings";
 import useApi from "../hooks/useApi";
 
 function LIstingCategoryScreen({ navigation , route}) {
-  const categoryId = route.params._id;
-  const getListingsApi = useApi(listingsApi.getListingByCategory);
+  const searchTerm = route.params;
+  const getListingsApi = useApi(listingsApi.getListings);
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
     getListings();
-  }, []);
+  }, [searchTerm]);
 
   const getListings = async () => {
-    const result = await getListingsApi.request(categoryId);
-    setListings(result.data);
+    const result = await getListingsApi.request(1, searchTerm);
+    setListings(result.data.data);
   };
 
   return (
@@ -51,7 +51,7 @@ function LIstingCategoryScreen({ navigation , route}) {
             <>
               {(listings.length === 0 && !getListingsApi.loading && !getListingsApi.error) && (
                 <View style={styles.empty}>
-                  <AppText>No listing in this category yet</AppText>
+                  <AppText>No Result found</AppText>
                 </View>
               )}
               {getListingsApi.error && (

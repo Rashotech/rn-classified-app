@@ -16,6 +16,7 @@ const useAuth = () => {
         const user = data.user;
         setUser(user);
         authStorage.storeToken(data.tokens.access.token);
+        authStorage.storeUser(data.user);
     };
 
     return { user, logIn, logOut };

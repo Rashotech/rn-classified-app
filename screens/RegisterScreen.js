@@ -16,8 +16,10 @@ import {
 } from "../components/forms";
 
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required().label("Name"),
+  firstName: Yup.string().required().label("First Name"),
+  lastName: Yup.string().required().label("Last Name"),
   email: Yup.string().required().email().label("Email"),
+  phoneNumber: Yup.string().required().min(11).max(11).label("Phone Number"),
   password: Yup.string().required().min(4).label("Password"),
 });
 
@@ -52,7 +54,7 @@ function RegisterScreen() {
       <ActivityIndicator visible={registerApi.loading || loginApi.loading} />
       <Screen style={styles.container}>
         <Form
-          initialValues={{ name: "", email: "", password: "" }}
+          initialValues={{ firstName: "", lastName: "", phoneNumber: "", email: "", password: "" }}
           onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
@@ -60,8 +62,22 @@ function RegisterScreen() {
           <FormField
             autoCorrect={false}
             icon="account"
-            name="name"
-            placeholder="Name"
+            name="firstName"
+            placeholder="Enter your first name"
+          />
+          <FormField
+            autoCorrect={false}
+            icon="account"
+            name="lastName"
+            placeholder="Enter your last name"
+          />
+          <FormField
+            autoCapitalize="none"
+            autoCorrect={false}
+            icon="phone"
+            keyboardType="numeric"
+            name="phoneNumber"
+            placeholder="Enter your phone number"
           />
           <FormField
             autoCapitalize="none"

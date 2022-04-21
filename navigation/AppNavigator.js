@@ -1,23 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import navigation from '../navigation/rootNavigation';
 
 import FeedNavigator from "../navigation/FeedNavigator";
 import ListingEditScreen from "../screens/ListingEditScreen";
 import AccountNavigator from "./AccountNavigator";
 import NewListingButton from "./NewListingButton";
 import routes from "./routes";
-import useNotifications from "../hooks/useLocation";
+import useNotifications from "../hooks/useNotifications";
+import { initiateSocketConnection, disconnectSocket } from '../hooks/socket.service';
+import useAuth from '../auth/useAuth';
 
 const Tab = createBottomTabNavigator();
 
-// (notification) => {
-//   navigation.navigate('Settings', { screen: 'Messages' });
-// }
-
-
 const AppNavigator = () => {
+  const { user } = useAuth();
+  useEffect(() => {
+    initiateSocketConnection(user);
+    return () => {
+      disconnectSocket();
+    };
+  }, [user]);
+  
   useNotifications();
   return (
   <Tab.Navigator screenOptions={{ headerShown: false }}>

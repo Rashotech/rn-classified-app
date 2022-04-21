@@ -11,6 +11,14 @@ const storeToken = async (authToken) => {
   }
 };
 
+const storeUser = async (user) => {
+  try {
+    await SecureStore.setItemAsync("user", JSON.stringify(user));
+  } catch (error) {
+    console.log("Error storing user data.", error);
+  }
+};
+
 const getToken = async () => {
   try {
     return await SecureStore.getItemAsync(key);
@@ -28,16 +36,17 @@ const removeToken = async () => {
 };
 
 const getUser = async () => {
-    try {
-        const token = await getToken();
-        return (token) ? jwtDecode(token) : null;
-    } catch (error) {
-        
-    }
+  try {
+    const user = await SecureStore.getItemAsync("user");
+    return JSON.parse(user);
+  } catch (error) {
+    console.log("Error getting the user data.", error);
+  }
 }
 
 export default {
   getUser,
+  storeUser,
   getToken,
   removeToken,
   storeToken,

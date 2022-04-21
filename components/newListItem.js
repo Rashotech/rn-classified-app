@@ -1,17 +1,14 @@
 import React from "react";
 import { View, StyleSheet, Image, TouchableHighlight } from "react-native";
-import Swipeable from "react-native-gesture-handler/Swipeable";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import Time from '../utility/time'
+import Swipeable from "react-native-gesture-handler/Swipeable";
 
-import AppText from "./AppText";
+import Text from "./AppText";
 import colors from "../config/colors";
 
 function ListItem({
   title,
   subTitle,
-  listing,
-  timestamp,
   image,
   IconComponent,
   onPress,
@@ -24,19 +21,13 @@ function ListItem({
           {IconComponent}
           {image && <Image style={styles.image} source={{ uri: image }} />}
           <View style={styles.detailsContainer}>
-            <View style={{flexDirection: 'row',justifyContent: 'space-between', alignItems: 'center'}}>
-              <AppText style={styles.title} numberOfLines={1}>
-                {title}
-              </AppText>
-              {timestamp && (<AppText style={{ fontSize: 13}}>{Time(timestamp)}</AppText>)}
-            </View>
-            <AppText style={styles.listing} numberOfLines={1}>
-              {listing}
-            </AppText>
+            <Text style={styles.title} numberOfLines={1}>
+              {title}
+            </Text>
             {subTitle && (
-              <AppText style={styles.subTitle} numberOfLines={2}>
+              <Text style={styles.subTitle} numberOfLines={2}>
                 {subTitle}
-              </AppText>
+              </Text>
             )}
           </View>
           <MaterialCommunityIcons
@@ -72,10 +63,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: "500",
-  },
-  listing: {
-    fontWeight: "400",
-    fontSize: 15,
   },
 });
 

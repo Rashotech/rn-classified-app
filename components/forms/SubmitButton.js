@@ -3,10 +3,10 @@ import { useFormikContext } from "formik";
 
 import Button from "../AppButton";
 
-function SubmitButton({ title }) {
-  const { handleSubmit } = useFormikContext();
+function SubmitButton({ title, type, width="100%" }) {
+  const { handleSubmit, resetForm } = useFormikContext();
 
-  return <Button title={title} onPress={handleSubmit} />;
+  return <Button title={title} width={width} onPress={type === 'clear' ? resetForm : handleSubmit} />;
 }
 
 export default SubmitButton;

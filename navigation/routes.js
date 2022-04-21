@@ -5,4 +5,7 @@ export default Object.freeze({
   LOGIN: "Login",
   MESSAGES: "Messages",
   REGISTER: "Register",
+  USER_LISTINGS: "Mylistings",
+  LISTING_SEARCH: "ListingSearch",
+  LISTING_FILTER: "ListingFilter",
 });

@@ -18,17 +18,17 @@ export default function AppTextInput({ send, search, icon, width='100%', onPress
 const styles = StyleSheet.create({
     container: {
         backgroundColor: defaultStyles.colors.light,
-        borderRadius: 25,
+        borderRadius: 10,
         flexDirection: "row",
-        padding: 15,
-        marginVertical: 10
+        padding: 5,
+        marginLeft: -40
     },
     icon: {
         marginRight: 10
     },
     send: {
         position: 'absolute',
-        right: 20,
-        top: 15
+        right: 40,
+        top: 5
     },
 })

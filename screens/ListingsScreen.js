@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, FlatList, ActivityIndicator as ActivityIndicator1 } from "react-native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  ActivityIndicator as ActivityIndicator1,
+} from "react-native";
+import TextInput from "../components/AppTextInput";
 
 import ActivityIndicator from "../components/ActivityIndicator";
 import AppText from "../components/AppText";
@@ -16,6 +22,7 @@ import CategoryPickerItem from "../components/CategoryPickerItem";
 
 function ListingsScreen({ navigation }) {
   const [page, setPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [loadingMore, setLoadingMore] = useState(false);
   const getListingsApi = useApi(listingsApi.getListings);
@@ -43,12 +50,27 @@ function ListingsScreen({ navigation }) {
     setLoadingMore(false);
   };
 
+  const refreshListings = async () => {
+    const result = await getListingsApi.request(1);
+    setListings(result.data.data);
+    setTotalPages(result.data.totalPages);
+    setLoadingMore(false);
+  };
+
   const handleLoadMore = () => {
-    if(totalPages !== page) {
+    if (totalPages !== page) {
       setPage(page + 1);
       setLoadingMore(true);
       getListings();
     }
+  };
+
+  const handleSubmit = () => {
+    setSearchTerm("");
+    const searchItem = {
+      keyword: searchTerm,
+    };
+    navigation.navigate(routes.LISTING_SEARCH, searchItem);
   };
 
   const renderFooter = () => {
@@ -56,9 +78,9 @@ function ListingsScreen({ navigation }) {
     return (
       <View
         style={{
-          position: 'relative',
-          height: '100%',
-          width: '100%',
+          position: "relative",
+          height: "100%",
+          width: "100%",
           paddingVertical: 20,
           marginTop: 10,
           marginBottom: 10,
@@ -72,7 +94,9 @@ function ListingsScreen({ navigation }) {
   return (
     <>
       <ActivityIndicator
-        visible={getListingsApi.loading || categoriesApi.loading}
+        visible={
+          (getListingsApi.loading || categoriesApi.loading) && !loadingMore
+        }
       />
       <Screen style={styles.screen}>
         <FlatList
@@ -87,7 +111,7 @@ function ListingsScreen({ navigation }) {
             />
           )}
           refreshing={refreshing}
-          onRefresh={getListingsApi.request}
+          onRefresh={() => refreshListings()}
           ListHeaderComponent={
             <>
               <View style={styles.header}>
@@ -95,38 +119,62 @@ function ListingsScreen({ navigation }) {
                   Welcome to The Classified App where you can sell what you
                   don't need
                 </AppText>
+
+                <TextInput
+                  onChangeText={(text) => setSearchTerm(text)}
+                  value={searchTerm}
+                  placeholder="Search Anything here..."
+                  maxLength={50}
+                  search="search"
+                  send="filter"
+                  blurOnSubmit={true}
+                  onSubmitEditing={handleSubmit}
+                  returnKeyType="search"
+                  onPress={() =>
+                    navigation.navigate(routes.LISTING_FILTER, searchTerm)
+                  }
+                />
               </View>
               {getListingsApi.error && (
                 <>
                   <AppText>Couldn't retrieve the listings.</AppText>
-                  <AppButton title="Retry" onPress={getListingsApi.request(page)} />
+                  <AppButton
+                    title="Retry"
+                    onPress={getListingsApi.request(page)}
+                  />
                 </>
               )}
             </>
           }
           ListFooterComponent={
-            <FlatList
-              data={listings}
-              style={styles.list}
-              keyExtractor={(listing) => listing._id.toString()}
-              renderItem={({ item }) => (
-                <Card
-                  title={item.title}
-                  subTitle={"₦ " + item.price}
-                  condition={item.condition}
-                  region={item.region}
-                  thumbnailUrl={item.images[0].thumbnailUrl}
-                  imageUrl={item.images[0].originalUrl}
-                  onPress={() =>
-                    navigation.navigate(routes.LISTING_DETAILS, item)
-                  }
-                />
-              )}
-              onEndReached={handleLoadMore}
-              onEndReachedThreshold={0.5}
-              initialNumToRender={10}
-              ListFooterComponent={renderFooter}
-            />
+            listings.length === 0 && !getListingsApi.error ? (
+              <View style={styles.empty}>
+                <AppText>No listings</AppText>
+              </View>
+            ) : (
+              <FlatList
+                data={listings}
+                style={styles.list}
+                keyExtractor={(listing) => listing._id.toString()}
+                renderItem={({ item }) => (
+                  <Card
+                    title={item.title}
+                    subTitle={"₦ " + item.price}
+                    condition={item.condition}
+                    region={item.region}
+                    thumbnailUrl={item.images[0].thumbnailUrl}
+                    imageUrl={item.images[0].originalUrl}
+                    onPress={() =>
+                      navigation.navigate(routes.LISTING_DETAILS, item)
+                    }
+                  />
+                )}
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.5}
+                initialNumToRender={10}
+                ListFooterComponent={renderFooter}
+              />
+            )
           }
         />
       </Screen>
@@ -155,6 +203,11 @@ const styles = StyleSheet.create({
   },
   screen: {
     backgroundColor: colors.primary,
+  },
+  empty: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
   },
 });
 

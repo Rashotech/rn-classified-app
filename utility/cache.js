@@ -30,7 +30,6 @@ const get = async (key) => {
     if (!item) return null;
 
     if (isExpired(item)) {
-      // Command Query Separation (CQS)
       await AsyncStorage.removeItem(prefix + key);
       return null;
     }

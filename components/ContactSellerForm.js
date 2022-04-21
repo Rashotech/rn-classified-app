@@ -10,7 +10,8 @@ function ContactSellerForm({ listing }) {
   const handleSubmit = async ({ message }, { resetForm }) => {
     Keyboard.dismiss();
 
-    const result = await messagesApi.send(message, listing.id);
+    const { data: chat } = await messagesApi.createChat(listing.postedBy._id, listing._id);
+    const result = await messagesApi.sendMessage(chat._id, message);
 
     if (!result.ok) {
       console.log("Error", result);
@@ -19,6 +20,8 @@ function ContactSellerForm({ listing }) {
 
     resetForm();
 
+
+    Alert.alert("Success", "Your message has been sent to the seller!")
     Notifications.scheduleNotificationAsync({
       content: {
         title: "Awesome!",

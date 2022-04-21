@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, FlatList } from 'react-native';
 import Screen from '../components/Screen';
-import ListItem from '../components/ListItem';
+import ListItem from '../components/newListItem';
 import Icon from '../components/Icon';
 import colors from '../config/colors';
 import ListItemSeparator from '../components/ListItemSeparator';
@@ -14,7 +14,8 @@ const menuItems = [
         icon: {
             name: "format-list-bulleted",
             backgroundColor: colors.primary
-        }
+        },
+        targetScreen: routes.USER_LISTINGS
     },
     {
         title: "My Messages",
@@ -23,7 +24,7 @@ const menuItems = [
             backgroundColor: colors.secondary
         },
         targetScreen: routes.MESSAGES
-    },
+    }
 ]
 
 export default function Accountscreen({ navigation }) {
@@ -33,9 +34,9 @@ export default function Accountscreen({ navigation }) {
         <Screen style={styles.screen}>
             <View style={styles.container}>
                 <ListItem 
-                    title={user.firstName + user.lastName}
+                    title={user.firstName + " " + user.lastName}
                     subTitle={user.email}
-                    image={require('../assets/mosh.jpg')}
+                    image={user.profilePic}
                 />
             </View>
             <View style={styles.container}>
